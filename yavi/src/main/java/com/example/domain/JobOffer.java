@@ -28,7 +28,7 @@ public abstract class JobOffer {
             )).build()
             .andThen(s -> JobOfferType.valueOf(s.toUpperCase()));
 
-    static Arguments1Validator<Map<String, Object>, JobOffer> mapValidator = (m, locale, context) -> typeValidator.validate(Objects.toString(m.get("type")))
+    public static Arguments1Validator<Map<String, Object>, JobOffer> mapValidator = (m, locale, context) -> typeValidator.validate(Objects.toString(m.get("type")))
             .flatMap(type -> (switch (type) {
                 case PROJECT -> ProjectJobOffer.mapValidator.validate(m, locale, context);
                 case COMPETITION -> CompetitionJobOffer.mapValidator.validate(m, locale, context);
