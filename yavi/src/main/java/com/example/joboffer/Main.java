@@ -1,4 +1,4 @@
-package com.example;
+package com.example.joboffer;
 
 public class Main {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package com.example.domain;
+package com.example.joboffer.domain;
 
 public enum JobOfferType {
     PROJECT, TASK, COMPETITION;

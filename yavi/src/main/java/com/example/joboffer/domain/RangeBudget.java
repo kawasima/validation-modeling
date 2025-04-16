@@ -1,10 +1,9 @@
-package com.example.domain;
+package com.example.joboffer.domain;
 
 import am.ik.yavi.arguments.Arguments1Validator;
 import am.ik.yavi.arguments.ArgumentsValidators;
 import am.ik.yavi.arguments.LongValidator;
 import am.ik.yavi.builder.LongValidatorBuilder;
-import am.ik.yavi.core.Validated;
 import lombok.ToString;
 
 import java.util.Map;

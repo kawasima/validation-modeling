@@ -1,4 +1,4 @@
-package com.example.domain;
+package com.example.joboffer.domain;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -6,13 +6,6 @@ import java.util.Objects;
 
 import am.ik.yavi.arguments.Arguments1Validator;
 import am.ik.yavi.arguments.ArgumentsValidators;
-import am.ik.yavi.arguments.LocalDateValidator;
-import am.ik.yavi.arguments.StringValidator;
-import am.ik.yavi.builder.LocalDateValidatorBuilder;
-import am.ik.yavi.builder.StringValidatorBuilder;
-import am.ik.yavi.builder.ValidatorBuilder;
-import am.ik.yavi.core.Validated;
-import am.ik.yavi.core.Validator;
 import lombok.Getter;
 import lombok.ToString;
 

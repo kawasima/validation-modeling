@@ -1,4 +1,4 @@
-package com.example.domain;
+package com.example.joboffer.domain;
 
 import am.ik.yavi.builder.ValidatorBuilder;
 import am.ik.yavi.core.ConstraintViolations;

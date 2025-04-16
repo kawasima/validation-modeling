@@ -1,6 +1,8 @@
-package com.example.domain;
+package com.example.joboffer.domain;
 
 import am.ik.yavi.core.Validated;
+import com.example.joboffer.domain.FixedSettlement;
+import com.example.joboffer.domain.JobOfferType;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

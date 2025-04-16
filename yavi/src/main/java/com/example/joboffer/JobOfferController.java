@@ -1,7 +1,7 @@
-package com.example;
+package com.example.joboffer;
 
 import am.ik.yavi.core.Validated;
-import com.example.domain.JobOffer;
+import com.example.joboffer.domain.JobOffer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;

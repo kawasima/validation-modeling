@@ -1,4 +1,4 @@
-package com.example.domain;
+package com.example.joboffer.domain;
 
 import am.ik.yavi.arguments.Arguments1Validator;
 import am.ik.yavi.arguments.LocalDateValidator;
