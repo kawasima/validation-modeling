@@ -1,4 +1,7 @@
-package com.example.enrollment;
+package com.example.enrollment.adapter;
+
+import com.example.enrollment.domain.Course;
+import com.example.enrollment.domain.Student;
 
 public interface CourseRepository {
     Course findById(int courseId);

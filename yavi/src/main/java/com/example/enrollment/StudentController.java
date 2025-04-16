@@ -2,14 +2,17 @@ package com.example.enrollment;
 
 import am.ik.yavi.arguments.ArgumentsValidators;
 import am.ik.yavi.core.ConstraintViolations;
+import com.example.enrollment.adapter.CourseRepository;
+import com.example.enrollment.adapter.StudentRepository;
+import com.example.enrollment.domain.*;
 import io.vavr.Tuple2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.example.enrollment.Course.courseIdValidator;
-import static com.example.enrollment.Student.studentIdValidator;
+import static com.example.enrollment.domain.Course.courseIdValidator;
+import static com.example.enrollment.domain.Student.studentIdValidator;
 
 @Controller
 public class StudentController {
@@ -23,7 +26,7 @@ public class StudentController {
 
     @PostMapping("/enroll")
     public ResponseEntity<ApiResponse<CanEnrollStudent>> enroll(@RequestParam("studentId") int studentId,
-                                   @RequestParam("courseId") int courseId) {
+                                                                @RequestParam("courseId") int courseId) {
         EnrollmentRule enrollmentRule = new EnrollmentRule(courseRepository);
 
         return ArgumentsValidators.combine(studentIdValidator, courseIdValidator)

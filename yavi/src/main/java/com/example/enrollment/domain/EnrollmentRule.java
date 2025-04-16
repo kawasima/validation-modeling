@@ -1,13 +1,12 @@
-package com.example.enrollment;
+package com.example.enrollment.domain;
 
 import am.ik.yavi.core.ConstraintViolation;
 import am.ik.yavi.core.Validated;
 import am.ik.yavi.message.SimpleMessageFormatter;
-import org.springframework.stereotype.Component;
+import com.example.enrollment.adapter.CourseRepository;
 
 import java.util.Locale;
 
-@Component
 public class EnrollmentRule {
     private final CourseRepository courseRepository;
     public EnrollmentRule(CourseRepository courseRepository) {

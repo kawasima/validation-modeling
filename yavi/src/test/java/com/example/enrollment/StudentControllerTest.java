@@ -1,12 +1,13 @@
 package com.example.enrollment;
 
+import com.example.enrollment.adapter.CourseRepository;
+import com.example.enrollment.adapter.StudentRepository;
+import com.example.enrollment.domain.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class StudentControllerTest {

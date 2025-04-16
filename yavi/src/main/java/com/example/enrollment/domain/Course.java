@@ -1,4 +1,4 @@
-package com.example.enrollment;
+package com.example.enrollment.domain;
 
 import am.ik.yavi.arguments.IntegerValidator;
 import am.ik.yavi.builder.IntegerValidatorBuilder;
