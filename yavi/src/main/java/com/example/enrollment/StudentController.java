@@ -29,9 +29,9 @@ public class StudentController {
                                                                 @RequestParam("courseId") int courseId) {
         EnrollmentRule enrollmentRule = new EnrollmentRule(courseRepository);
 
-        return ArgumentsValidators.combine(studentIdValidator, courseIdValidator)
+        return ArgumentsValidators.split(studentIdValidator, courseIdValidator)
                 .apply(Tuple2::new)
-                .validate(studentId)
+                .validate(studentId, courseId)
                 .map(
                         // 業務処理前のI/O
                 $ -> new Tuple2<>(
