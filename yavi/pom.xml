@@ -16,7 +16,7 @@
         <dependency>
             <groupId>am.ik.yavi</groupId>
             <artifactId>yavi</artifactId>
-            <version>0.14.4</version>
+            <version>0.15.0</version>
         </dependency>
         <dependency>
             <groupId>io.vavr</groupId>
