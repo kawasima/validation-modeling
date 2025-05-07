@@ -6,6 +6,7 @@ import com.example.enrollment.adapter.CourseRepository;
 import com.example.enrollment.adapter.StudentRepository;
 import com.example.enrollment.domain.*;
 import io.vavr.Tuple2;
+import org.jooq.DSLContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,15 +19,17 @@ import static com.example.enrollment.domain.Student.studentIdValidator;
 public class StudentController {
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
+    private final DSLContext dslContext;
 
-    public StudentController(StudentRepository studentRepository, CourseRepository courseRepository) {
+    public StudentController(DSLContext dslContext, StudentRepository studentRepository, CourseRepository courseRepository) {
+        this.dslContext = dslContext;
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
     }
 
     @PostMapping("/enroll")
-    public ResponseEntity<ApiResponse<CanEnrollStudent>> enroll(@RequestParam("studentId") int studentId,
-                                                                @RequestParam("courseId") int courseId) {
+    public ResponseEntity<ApiResponse<CanEnrollStudent>> enroll(@RequestParam("studentId") long studentId,
+                                                                @RequestParam("courseId") long courseId) {
         EnrollmentRule enrollmentRule = new EnrollmentRule(courseRepository);
 
         return ArgumentsValidators.split(studentIdValidator, courseIdValidator)
@@ -48,8 +51,10 @@ public class StudentController {
                                 .body(ApiResponse.failure(ConstraintViolations.of(errors))),
                 enroll -> {
                     // 業務処理後のI/O
-                    courseRepository.enrollStudent(enroll.course(), enroll.student());
-                    return ResponseEntity.ok(ApiResponse.success(enroll));
+                    return dslContext.transactionResult(() -> {
+                        courseRepository.enrollStudent(enroll.course(), enroll.student());
+                        return ResponseEntity.ok(ApiResponse.success(enroll));
+                    });
                 });
     }
 }

@@ -1,12 +1,13 @@
 package com.example.enrollment.adapter;
 
 import com.example.enrollment.domain.Course;
+import com.example.enrollment.domain.Identifier;
 import com.example.enrollment.domain.Student;
 
 public interface CourseRepository {
-    Course findById(int courseId);
+    Course findById(Identifier courseId);
 
-    int availableEnrollments(int courseId);
+    int availableEnrollments(Identifier courseId);
 
     // StudentをCourseに登録する
     // Courseの空きチェックはされていることが前提ではあるが、コンカレンシーのために、

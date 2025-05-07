@@ -11,12 +11,12 @@ public class EnrollmentRule {
     }
 
     public Validated<CanEnrollStudent> apply(Student student, Course course) {
-        if (student.status() != Student.StudentStatus.ACTIVE) {
+        if (student.getStatus() != Student.StudentStatus.ACTIVE) {
             return Validated.failureWith(ConstraintViolation.builder()
                     .name("studentStatus")
                     .message("StudentがActiveではありません"));
         }
-        if (courseRepository.availableEnrollments(course.courseId()) == 0) {
+        if (courseRepository.availableEnrollments(course.getCourseId()) == 0) {
             return Validated.failureWith(ConstraintViolation.builder()
                     .name("availableEnrollments")
                     .message("コースに空きがありません"));
