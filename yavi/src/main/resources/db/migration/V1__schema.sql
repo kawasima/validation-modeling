@@ -10,13 +10,13 @@ CREATE TABLE courses (
     description TEXT NOT NULL
 );
 
-CREATE TABLE enrolls (
+CREATE TABLE enrollments (
     student_id INT NOT NULL,
     course_id INT NOT NULL,
     PRIMARY KEY (student_id, course_id),
     FOREIGN KEY (student_id) REFERENCES students(student_id),
     FOREIGN KEY (course_id) REFERENCES courses(course_id)
-)
+);
 
 
 CREATE TABLE job_offers (

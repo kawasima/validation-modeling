@@ -5,4 +5,6 @@ import com.example.enrollment.domain.Student;
 
 public interface StudentRepository {
     Student findById(Identifier studentId);
+
+    void save(Student student);
 }

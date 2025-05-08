@@ -51,5 +51,4 @@ public class Student {
     public static Validated<Student> parse(long studentId, String name, StudentStatus status) {
         return validator.validate(studentId, name, status);
     }
-
 }

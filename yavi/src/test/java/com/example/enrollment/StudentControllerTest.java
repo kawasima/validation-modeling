@@ -1,5 +1,6 @@
 package com.example.enrollment;
 
+import com.example.TestDatabaseConfig;
 import com.example.enrollment.adapter.CourseRepository;
 import com.example.enrollment.adapter.StudentRepository;
 import com.example.enrollment.domain.*;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jooq.SpringTransactionProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,41 +32,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {StudentControllerTest.Config.class})
+@ContextConfiguration(classes = {TestDatabaseConfig.class})
 class StudentControllerTest {
-    @Configuration
-    static class Config {
-        @Bean
-        public DataSource embeddedDatabase() {
-            return new EmbeddedDatabaseBuilder()
-                    .setType(EmbeddedDatabaseType.H2)
-                    .build();
-        }
-        @Bean
-        public DataSourceConnectionProvider connectionProvider(DataSource ds) {
-            return new DataSourceConnectionProvider(
-                    new TransactionAwareDataSourceProxy(ds));
-        }
-        @Bean
-        public DefaultConfiguration jooqConfiguration(DataSourceConnectionProvider connectionProvider) {
-            PlatformTransactionManager transactionManager = new DataSourceTransactionManager(connectionProvider.dataSource());
-            DefaultConfiguration config = new DefaultConfiguration();
-            config.set(connectionProvider);
-            config.set(SQLDialect.H2);
-            config.set(new ThreadLocalTransactionProvider(connectionProvider));
-            return config;
-        }
-        @Bean
-        public DSLContext dslContext(DefaultConfiguration jooqConfiguration) {
-            return DSL.using(jooqConfiguration);
-        }
-    }
-
-    @Autowired
-    private DSLContext dslContext;
-
     @Test
-    void testEnrollStudent() {
+    void testEnrollStudent(@Autowired DSLContext dslContext) {
         // Given
         Student student = Student.of(1, "kawasima", Student.StudentStatus.ACTIVE);
         Course course = Course.of(1L, "AI");
@@ -86,7 +58,7 @@ class StudentControllerTest {
 
     @Test
     @DisplayName("学生がアクティブでない場合、エラーを返す")
-    void testNonActiveStudentCannotEnroll() {
+    void testNonActiveStudentCannotEnroll(@Autowired DSLContext dslContext) {
         // Given
         Student student = Student.of(1, "kawasima", Student.StudentStatus.INACTIVE);
         Course course = Course.of(1L, "AI");
@@ -108,7 +80,7 @@ class StudentControllerTest {
 
     @Test
     @DisplayName("コースに空きがない場合、エラーを返す")
-    void cannotEnrollWhenNoAvailableSeats() {
+    void cannotEnrollWhenNoAvailableSeats(@Autowired DSLContext dslContext) {
         // Given
         Student student = Student.of(1, "kawasima",Student.StudentStatus.ACTIVE);
         Course course = Course.of(1L, "AI");

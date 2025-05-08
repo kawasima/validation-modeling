@@ -4,12 +4,14 @@ import com.example.enrollment.domain.Course;
 import com.example.enrollment.domain.Identifier;
 import com.example.enrollment.domain.Student;
 import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
 
 import java.util.Objects;
 import java.util.Optional;
 
 import static org.jooq.impl.DSL.table;
 
+@Repository
 public class CourseRepositoryImpl implements CourseRepository {
     private final DSLContext dslContext;
     private final CourseMapper courseMapper;
