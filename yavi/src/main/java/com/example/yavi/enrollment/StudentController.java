@@ -1,4 +1,4 @@
-package com.example.yavi.joboffer.domain;
+package com.example.yavi.enrollment;
 
 import am.ik.yavi.arguments.ArgumentsValidators;
 import am.ik.yavi.core.ConstraintViolations;

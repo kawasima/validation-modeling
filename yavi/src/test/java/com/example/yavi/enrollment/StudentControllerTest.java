@@ -5,7 +5,6 @@ import com.example.yavi.TestDatabaseConfig;
 import com.example.yavi.enrollment.adapter.CourseRepository;
 import com.example.yavi.enrollment.adapter.StudentRepository;
 import com.example.yavi.enrollment.domain.*;
-import com.example.yavi.joboffer.domain.StudentController;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
