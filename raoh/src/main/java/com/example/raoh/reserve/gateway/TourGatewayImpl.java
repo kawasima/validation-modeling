@@ -3,10 +3,11 @@ package com.example.raoh.reserve.gateway;
 import com.example.raoh.reserve.data.Tour;
 import net.unit8.raoh.Result;
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+
+import static org.jooq.impl.DSL.field;
 
 @Component
 public class TourGatewayImpl implements TourGateway {
@@ -18,19 +19,18 @@ public class TourGatewayImpl implements TourGateway {
 
     @Override
     public Result<Tour> findByTourCode(String tourCode) {
-        Record rec = dslContext.select()
+        var record = dslContext.select(
+                        field("tour_id"),
+                        field("tour_code"),
+                        field("name"),
+                        field("capacity"))
                 .from("tours")
-                .where("tour_code = ?", tourCode)
+                .where(field("tour_code").eq(tourCode))
                 .fetchOne();
-        if (rec == null) {
+        if (record == null) {
             return Result.fail("not_found", "ツアーが見つかりません");
         }
-        return Result.ok(new Tour(
-                rec.get("tour_id", Long.class),
-                rec.get("tour_code", String.class),
-                rec.get("name", String.class),
-                rec.get("capacity", Integer.class)
-        ));
+        return RecordDecoders.tour().decode(record);
     }
 
     @Override
