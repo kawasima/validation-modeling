@@ -4,9 +4,9 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+
 import java.lang.annotation.*;
 import java.time.LocalDate;
-import java.util.List;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -21,6 +21,7 @@ import java.util.List;
 @Data
 @ValidJobOfferForm
 public class JobOfferForm {
+    // 共通フィールド
     @NotBlank(message = "タイトルは必須です")
     @Size(max = 100, message = "タイトルは100文字以内で入力してください")
     private String title;
@@ -30,46 +31,69 @@ public class JobOfferForm {
     private String description;
 
     @NotBlank(message = "依頼タイプは必須です")
-    @Pattern(regexp = "PROJECT|TASK|CONTEST", message = "依頼タイプはPROJECT、TASK、CONTESTのいずれかである必要があります")
+    @Pattern(regexp = "PROJECT|TASK|COMPETITION", message = "依頼タイプはPROJECT、TASK、COMPETITIONのいずれかである必要があります")
     private String jobOfferType;
 
-    @Size(max = 500, message = "求めるスキルは500文字以内で入力してください")
-    private String requiredSkills;
+    @NotNull(message = "募集期限は必須です")
+    @Future(message = "募集期限は未来の日付である必要があります")
+    private LocalDate offerExpireDate;
 
-    @Size(max = 10, message = "添付ファイルは10個以内にしてください")
-    private List<String> attachments;
+    // PROJECT: settlement
+    @Pattern(regexp = "FIXED|PER_HOUR", message = "精算方式はFIXEDまたはPER_HOURである必要があります")
+    private String settlementMethod;
 
-    @Size(max = 5, message = "特記事項は5個以内にしてください")
-    private List<String> specialNotes;
+    @Min(value = 2, message = "募集人数は2人以上である必要があります")
+    @Max(value = 1023, message = "募集人数は1023人以下である必要があります")
+    private Long numberOfWorkers;
 
-    @NotNull(message = "応募期限は必須です")
-    @Future(message = "応募期限は未来の日付である必要があります")
-    private LocalDate applicationDeadline;
+    // PROJECT/FIXED: budget
+    @Pattern(regexp = "RANGE|LIMIT|UNDECIDED", message = "予算タイプはRANGE、LIMIT、UNDECIDEDのいずれかである必要があります")
+    private String budgetType;
 
-    @NotNull(message = "支払い方式は必須です")
-    @Pattern(regexp = "FIXED|HOURLY", message = "支払い方式はFIXEDまたはHOURLYである必要があります")
-    private String paymentType;
+    @Min(value = 1, message = "予算下限は1以上である必要があります")
+    private Long budgetLowerBound;
 
-    @NotNull(message = "納品希望日は必須です")
-    @Future(message = "納品希望日は未来の日付である必要があります")
-    private LocalDate deliveryDate;
+    @Min(value = 1, message = "予算上限は1以上である必要があります")
+    @Max(value = 99_999_999, message = "予算上限は99999999以下である必要があります")
+    private Long budgetUpperBound;
 
-    @Min(value = 1, message = "募集人数は1人以上である必要があります")
-    @Max(value = 1024, message = "募集人数は1024人以下である必要があります")
-    private Integer numberOfRecruits;
+    @Min(value = 1, message = "予算上限額は1以上である必要があります")
+    @Max(value = 99_999_999, message = "予算上限額は99999999以下である必要があります")
+    private Long budgetLimit;
 
-    @Min(value = 5, message = "作業単価は5円以上である必要があります")
-    private Integer taskPrice;
+    // PROJECT/PER_HOUR
+    @Pattern(regexp = "FROM_700_TO_1000|FROM_1000_TO_1500|FROM_1500_TO_2000|FROM_2000_TO_3000|FROM_3000_TO_4000|FROM_4000_TO_5000|OVER_5000",
+            message = "時間単価の範囲が不正です")
+    private String hourlyRate;
 
-    @Min(value = 1, message = "作業件数は1件以上である必要があります")
-    private Integer taskCount;
+    @Min(value = 2, message = "週あたり稼働時間は2以上である必要があります")
+    @Max(value = 159, message = "週あたり稼働時間は159以下である必要があります")
+    private Long workHoursPerWeek;
 
-    @Min(value = 0, message = "1人あたりの件数上限は0以上である必要があります")
-    private Integer maxTasksPerPerson;
+    @Pattern(regexp = "UNDER_ONE_WEEK|ONE_WEEK_TO_ONE_MONTH|ONE_MONTH_TO_THREE_MONTHS|THREE_MONTHS_TO_SIX_MONTHS|OVER_SIX_MONTHS",
+            message = "募集期間が不正です")
+    private String offerDuration;
 
-    @Pattern(regexp = "ECONOMY|BASIC|STANDARD|PREMIUM|CUSTOM", message = "契約金額はECONOMY、BASIC、STANDARD、PREMIUM、CUSTOMのいずれかである必要があります")
-    private String contractAmount;
+    // TASK
+    @Min(value = 6, message = "作業単価は6円以上である必要があります")
+    @Max(value = 999_999, message = "作業単価は999999円以下である必要があります")
+    private Long ratePerTaskUnit;
 
-    @Min(value = 0, message = "カスタム契約金額は0以上である必要があります")
-    private Integer customContractAmount;
+    @Min(value = 2, message = "作業件数は2件以上である必要があります")
+    @Max(value = 999_999, message = "作業件数は999999件以下である必要があります")
+    private Long numberOfTaskUnits;
+
+    @Pattern(regexp = "UNLIMITED|LIMITED", message = "1人あたり件数制限はUNLIMITEDまたはLIMITEDである必要があります")
+    private String limitTaskUnitsType;
+
+    @Min(value = 2, message = "1人あたり件数上限は2以上である必要があります")
+    @Max(value = 2999, message = "1人あたり件数上限は2999以下である必要があります")
+    private Long limitTaskUnitsValue;
+
+    // COMPETITION
+    @Pattern(regexp = "ECONOMY|BASIC|STANDARD|PREMIUM|CUSTOM", message = "契約金額タイプが不正です")
+    private String contractPriceType;
+
+    @Min(value = 1, message = "カスタム契約金額は1以上である必要があります")
+    private Long contractPriceValue;
 }
