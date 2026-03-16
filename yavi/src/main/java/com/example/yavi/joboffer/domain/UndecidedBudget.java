@@ -1,12 +1,11 @@
 package com.example.yavi.joboffer.domain;
 
 import am.ik.yavi.arguments.Arguments1Validator;
-import am.ik.yavi.builder.ObjectValidatorBuilder;
+import am.ik.yavi.core.Validated;
 
 import java.util.Map;
 
-public final class UndecidedBudget implements Budget {
-    static Arguments1Validator<Map<String, Object>, UndecidedBudget> mapValidator = ObjectValidatorBuilder.<UndecidedBudget>of("undecidedBudget", c -> c.notNull())
-            .build()
-            .<Map<String, Object>>compose(m -> new UndecidedBudget());
+public record UndecidedBudget() implements Budget {
+    static final Arguments1Validator<Map<String, Object>, UndecidedBudget> mapValidator =
+            (m, locale, context) -> Validated.successWith(new UndecidedBudget());
 }

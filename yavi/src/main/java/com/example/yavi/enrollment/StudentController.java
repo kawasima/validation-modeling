@@ -6,7 +6,6 @@ import com.example.yavi.ApiResponse;
 import com.example.yavi.enrollment.adapter.CourseRepository;
 import com.example.yavi.enrollment.adapter.StudentRepository;
 import com.example.yavi.enrollment.domain.*;
-import io.vavr.Tuple2;
 import org.jooq.DSLContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,6 +21,8 @@ public class StudentController {
     private final CourseRepository courseRepository;
     private final DSLContext dslContext;
 
+    record Pair<A, B>(A first, B second) {}
+
     public StudentController(DSLContext dslContext, StudentRepository studentRepository, CourseRepository courseRepository) {
         this.dslContext = dslContext;
         this.studentRepository = studentRepository;
@@ -34,19 +35,19 @@ public class StudentController {
         EnrollmentRule enrollmentRule = new EnrollmentRule(courseRepository);
 
         return ArgumentsValidators.split(studentIdValidator, courseIdValidator)
-                .apply(Tuple2::new)
+                .apply(Pair::new)
                 .validate(studentId, courseId)
                 .map(
                         // 業務処理前のI/O
-                $ -> new Tuple2<>(
-                        studentRepository.findById($._1()),
-                        courseRepository.findById($._2())
+                $ -> new Pair<>(
+                        studentRepository.findById($.first()),
+                        courseRepository.findById($.second())
                 ))
                 .flatMap($ -> {
                     // 業務処理
-                    Student student = $._1();
-                    Course course = $._2();
-                    return enrollmentRule.apply(student, course);
+                    Student student1 = $.first();
+                    Course course1 = $.second();
+                    return enrollmentRule.apply(student1, course1);
                 }).fold(
                 errors -> ResponseEntity.badRequest()
                                 .body(ApiResponse.failure(ConstraintViolations.of(errors))),

@@ -28,11 +28,11 @@ class JobOfferRepositoryImplTest {
         var repository = createRepository(dslContext);
 
         JobOffer jobOffer = repository.findById(1);
-        assertThat(jobOffer.getTitle()).isEqualTo("Web Development Project");
-        assertThat(jobOffer.getJobOfferType()).isEqualTo(JobOfferType.PROJECT);
+        assertThat(jobOffer.title()).isEqualTo("Web Development Project");
+        assertThat(jobOffer.jobOfferType()).isEqualTo(JobOfferType.PROJECT);
         assertThat(jobOffer).isInstanceOf(ProjectJobOffer.class);
         ProjectJobOffer project = (ProjectJobOffer) jobOffer;
-        assertThat(project.getSettlement()).isInstanceOf(FixedSettlement.class);
+        assertThat(project.settlement()).isInstanceOf(FixedSettlement.class);
     }
 
     @Test
@@ -41,13 +41,13 @@ class JobOfferRepositoryImplTest {
         var repository = createRepository(dslContext);
 
         JobOffer jobOffer = repository.findById(2);
-        assertThat(jobOffer.getTitle()).isEqualTo("Data Entry Task");
-        assertThat(jobOffer.getJobOfferType()).isEqualTo(JobOfferType.TASK);
+        assertThat(jobOffer.title()).isEqualTo("Data Entry Task");
+        assertThat(jobOffer.jobOfferType()).isEqualTo(JobOfferType.TASK);
         assertThat(jobOffer).isInstanceOf(TaskJobOffer.class);
         TaskJobOffer task = (TaskJobOffer) jobOffer;
-        assertThat(task.getRatePerTaskUnit()).isEqualTo(100);
-        assertThat(task.getNumberOfTaskUnits()).isEqualTo(1000);
-        assertThat(task.getLimitTaskUnitsPerWorker().getLimit()).hasValue(50L);
+        assertThat(task.ratePerTaskUnit()).isEqualTo(100);
+        assertThat(task.numberOfTaskUnits()).isEqualTo(1000);
+        assertThat(task.limitTaskUnitsPerWorker().getLimit()).hasValue(50L);
     }
 
     @Test
@@ -56,11 +56,11 @@ class JobOfferRepositoryImplTest {
         var repository = createRepository(dslContext);
 
         JobOffer jobOffer = repository.findById(3);
-        assertThat(jobOffer.getTitle()).isEqualTo("Logo Design Competition");
-        assertThat(jobOffer.getJobOfferType()).isEqualTo(JobOfferType.COMPETITION);
+        assertThat(jobOffer.title()).isEqualTo("Logo Design Competition");
+        assertThat(jobOffer.jobOfferType()).isEqualTo(JobOfferType.COMPETITION);
         assertThat(jobOffer).isInstanceOf(CompetitionJobOffer.class);
         CompetitionJobOffer competition = (CompetitionJobOffer) jobOffer;
-        assertThat(competition.getContractPrice()).isInstanceOf(ContractPrice.Standard.class);
+        assertThat(competition.contractPrice()).isInstanceOf(ContractPrice.Standard.class);
     }
 
     @Test

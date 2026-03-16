@@ -9,23 +9,18 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
-public interface Budget {
-    StringValidator<BudgetType> typeValidator = StringValidatorBuilder.of("type", c -> c.oneOf(
-                    Set.of("range", "limit", "undecided")
-            )).build()
-            .andThen(s -> BudgetType.valueOf(s.toUpperCase()));
+public sealed interface Budget permits RangeBudget, LimitBudget, UndecidedBudget {
+    enum Type { RANGE, LIMIT, UNDECIDED }
 
-    Arguments1Validator<Map<String, Object>, Budget> mapValidator = (m, locale, context) -> typeValidator.validate(Objects.toString(m.get("type")))
-            .flatMap(type -> (switch (type) {
-                    case RANGE -> RangeBudget.mapValidator.validate(m, locale, context);
-                    case LIMIT -> LimitBudget.mapValidator.validate(m, locale, context);
-                    case UNDECIDED -> UndecidedBudget.mapValidator.validate(m, locale, context);
-                }).map(Function.identity()
-            ));
+    StringValidator<Type> typeValidator = StringValidatorBuilder.of("type",
+            c -> c.oneOf(Set.of("range", "limit", "undecided"))
+    ).build().andThen(s -> Type.valueOf(s.toUpperCase()));
 
-    enum BudgetType {
-        RANGE,
-        LIMIT,
-        UNDECIDED;
-    }
+    Arguments1Validator<Map<String, Object>, Budget> mapValidator = (m, locale, context) ->
+            typeValidator.validate(Objects.toString(m.get("type")))
+                    .flatMap(type -> (switch (type) {
+                        case RANGE -> RangeBudget.mapValidator.validate(m, locale, context);
+                        case LIMIT -> LimitBudget.mapValidator.validate(m, locale, context);
+                        case UNDECIDED -> UndecidedBudget.mapValidator.validate(m, locale, context);
+                    }).map(Function.identity()));
 }

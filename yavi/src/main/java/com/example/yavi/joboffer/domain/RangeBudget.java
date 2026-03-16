@@ -4,31 +4,17 @@ import am.ik.yavi.arguments.Arguments1Validator;
 import am.ik.yavi.arguments.ArgumentsValidators;
 import am.ik.yavi.arguments.LongValidator;
 import am.ik.yavi.builder.LongValidatorBuilder;
-import lombok.Getter;
-import lombok.ToString;
 
 import java.util.Map;
 
-@ToString
-public final class RangeBudget implements Budget {
-    @Getter
-    private final Long lowerBound;
-    @Getter
-    private final Long upperBound;
+public record RangeBudget(long lowerBound, long upperBound) implements Budget {
+    static final LongValidator<Long> lowerBoundValidator = LongValidatorBuilder.of("lowerBound",
+            c -> c.greaterThan(0L)).build();
+    static final LongValidator<Long> upperBoundValidator = LongValidatorBuilder.of("upperBound",
+            c -> c.greaterThan(0L).lessThan(100_000_000L)).build();
 
-    static LongValidator<Long> lowerBoundValidator = LongValidatorBuilder.of("lowerBound", c -> c.greaterThan(0L))
-            .build();
-    static LongValidator<Long> upperBoundValidator = LongValidatorBuilder.of("upperBound", c -> c.greaterThan(0L).lessThan(100_000_000L))
-            .build();
-    static Arguments1Validator<Map<String, Object>, Long> mapLowerBoundValidator = lowerBoundValidator.compose(m -> ((Number) m.get("lowerBound")).longValue());
-    static Arguments1Validator<Map<String, Object>, Long> mapUpperBoundValidator = upperBoundValidator.compose(m -> ((Number) m.get("upperBound")).longValue());
-
-    static Arguments1Validator<Map<String, Object>, RangeBudget> mapValidator = ArgumentsValidators.combine(
-                    mapLowerBoundValidator, mapUpperBoundValidator)
-            .apply(RangeBudget::new);
-
-    private RangeBudget(Long lowerBound, Long upperBound) {
-        this.lowerBound = lowerBound;
-        this.upperBound = upperBound;
-    }
+    static final Arguments1Validator<Map<String, Object>, RangeBudget> mapValidator = ArgumentsValidators.combine(
+            lowerBoundValidator.<Map<String, Object>>compose(m -> ((Number) m.get("lowerBound")).longValue()),
+            upperBoundValidator.<Map<String, Object>>compose(m -> ((Number) m.get("upperBound")).longValue())
+    ).apply(RangeBudget::new);
 }

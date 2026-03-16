@@ -191,7 +191,7 @@ class JobOfferTest {
             ));
             assertThat(validated.isValid()).isTrue();
             CompetitionJobOffer offer = (CompetitionJobOffer) validated.value();
-            assertThat(offer.getContractPrice()).isInstanceOf(ContractPrice.Custom.class);
+            assertThat(offer.contractPrice()).isInstanceOf(ContractPrice.Custom.class);
         }
 
         @Test

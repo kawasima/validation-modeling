@@ -1,11 +1,7 @@
 package com.example.yavi.reserve.domain;
 
 import com.example.yavi.enrollment.domain.Identifier;
-import lombok.Getter;
-import lombok.ToString;
 
-@ToString
-@Getter
 public class Reservation {
     private final Identifier reservationId;
     private final Tour tour;
@@ -21,6 +17,36 @@ public class Reservation {
         this.adultCount = adultCount;
         this.childCount = childCount;
         this.remarks = remarks;
+    }
+
+    public Identifier getReservationId() {
+        return reservationId;
+    }
+
+    public Tour getTour() {
+        return tour;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public int getAdultCount() {
+        return adultCount;
+    }
+
+    public int getChildCount() {
+        return childCount;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation(reservationId=" + reservationId + ", tour=" + tour + ", customer=" + customer
+                + ", adultCount=" + adultCount + ", childCount=" + childCount + ", remarks=" + remarks + ")";
     }
 
     public static Reservation of(long reservationId, Tour tour, Customer customer, int adultCount, int childCount, String remarks) {

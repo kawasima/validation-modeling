@@ -9,11 +9,7 @@ import am.ik.yavi.builder.StringValidatorBuilder;
 import am.ik.yavi.core.Validated;
 import am.ik.yavi.core.ViolationMessage;
 import com.example.yavi.enrollment.domain.Identifier;
-import lombok.Getter;
-import lombok.ToString;
 
-@ToString
-@Getter
 public class Customer {
     private final Identifier customerId;
     private final String name;
@@ -23,6 +19,23 @@ public class Customer {
         this.customerId = customerId;
         this.name = name;
         this.email = email;
+    }
+
+    public Identifier getCustomerId() {
+        return customerId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer(customerId=" + customerId + ", name=" + name + ", email=" + email + ")";
     }
 
     public static final LongValidator<Identifier> customerIdValidator = LongValidatorBuilder.of("customerId",

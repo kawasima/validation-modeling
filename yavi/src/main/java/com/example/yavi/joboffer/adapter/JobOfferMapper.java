@@ -104,10 +104,10 @@ public class JobOfferMapper {
         addTypeSpecificFields(jobOffer, fields);
 
         Record rec = dslContext.newRecord(fields);
-        rec.set(field("title"), jobOffer.getTitle());
-        rec.set(field("description"), jobOffer.getDescription());
-        rec.set(field("offer_expire_date"), jobOffer.getOfferExpireDate());
-        rec.set(field("offer_type"), jobOffer.getJobOfferType().name());
+        rec.set(field("title"), jobOffer.title());
+        rec.set(field("description"), jobOffer.description());
+        rec.set(field("offer_expire_date"), jobOffer.offerExpireDate());
+        rec.set(field("offer_type"), jobOffer.jobOfferType().name());
         setTypeSpecificValues(jobOffer, rec);
         return rec;
     }
@@ -117,10 +117,10 @@ public class JobOfferMapper {
             case ProjectJobOffer p -> {
                 fields.add(field("settlement_method"));
                 fields.add(field("number_of_workers"));
-                Settlement settlement = p.getSettlement();
-                if (settlement instanceof FixedSettlement) {
+                Settlement settlement = p.settlement();
+                if (settlement instanceof FixedSettlement fs) {
                     fields.add(field("budget_type"));
-                    Budget budget = ((FixedSettlement) settlement).getBudget();
+                    Budget budget = fs.budget();
                     if (budget instanceof RangeBudget) {
                         fields.add(field("budget_lower_bound"));
                         fields.add(field("budget_upper_bound"));
@@ -137,50 +137,49 @@ public class JobOfferMapper {
                 fields.add(field("rate_per_task_unit"));
                 fields.add(field("number_of_task_units"));
                 fields.add(field("limit_task_units_type"));
-                if (t.getLimitTaskUnitsPerWorker().getLimit().isPresent()) {
+                if (t.limitTaskUnitsPerWorker().getLimit().isPresent()) {
                     fields.add(field("limit_task_units_value"));
                 }
             }
             case CompetitionJobOffer c -> {
                 fields.add(field("contract_price_type"));
-                if (c.getContractPrice() instanceof ContractPrice.Custom) {
+                if (c.contractPrice() instanceof ContractPrice.Custom) {
                     fields.add(field("contract_price_value"));
                 }
             }
-            default -> {}
         }
     }
 
     private void setTypeSpecificValues(JobOffer jobOffer, Record rec) {
         switch (jobOffer) {
             case ProjectJobOffer p -> {
-                Settlement settlement = p.getSettlement();
+                Settlement settlement = p.settlement();
                 if (settlement instanceof FixedSettlement fs) {
                     rec.set(field("settlement_method"), "FIXED");
-                    rec.set(field("number_of_workers"), fs.getNumberOfWorkers());
-                    Budget budget = fs.getBudget();
+                    rec.set(field("number_of_workers"), fs.numberOfWorkers());
+                    Budget budget = fs.budget();
                     if (budget instanceof RangeBudget rb) {
                         rec.set(field("budget_type"), "RANGE");
-                        rec.set(field("budget_lower_bound"), rb.getLowerBound());
-                        rec.set(field("budget_upper_bound"), rb.getUpperBound());
+                        rec.set(field("budget_lower_bound"), rb.lowerBound());
+                        rec.set(field("budget_upper_bound"), rb.upperBound());
                     } else if (budget instanceof LimitBudget lb) {
                         rec.set(field("budget_type"), "LIMIT");
-                        rec.set(field("budget_limit"), lb.getLimit());
+                        rec.set(field("budget_limit"), lb.limit());
                     } else if (budget instanceof UndecidedBudget) {
                         rec.set(field("budget_type"), "UNDECIDED");
                     }
                 } else if (settlement instanceof PerHourSettlement phs) {
                     rec.set(field("settlement_method"), "PER_HOUR");
-                    rec.set(field("number_of_workers"), phs.getNumberOfWorkers());
-                    rec.set(field("hourly_rate"), phs.getHourlyRate().name());
-                    rec.set(field("work_hours_per_week"), phs.getWorkHoursPerWeek());
-                    rec.set(field("offer_duration"), phs.getOfferDuration().name());
+                    rec.set(field("number_of_workers"), phs.numberOfWorkers());
+                    rec.set(field("hourly_rate"), phs.hourlyRate().name());
+                    rec.set(field("work_hours_per_week"), phs.workHoursPerWeek());
+                    rec.set(field("offer_duration"), phs.offerDuration().name());
                 }
             }
             case TaskJobOffer t -> {
-                rec.set(field("rate_per_task_unit"), t.getRatePerTaskUnit());
-                rec.set(field("number_of_task_units"), t.getNumberOfTaskUnits());
-                t.getLimitTaskUnitsPerWorker().getLimit().ifPresentOrElse(
+                rec.set(field("rate_per_task_unit"), t.ratePerTaskUnit());
+                rec.set(field("number_of_task_units"), t.numberOfTaskUnits());
+                t.limitTaskUnitsPerWorker().getLimit().ifPresentOrElse(
                         limit -> {
                             rec.set(field("limit_task_units_type"), "LIMITED");
                             rec.set(field("limit_task_units_value"), limit);
@@ -189,10 +188,10 @@ public class JobOfferMapper {
                 );
             }
             case CompetitionJobOffer c -> {
-                ContractPrice cp = c.getContractPrice();
+                ContractPrice cp = c.contractPrice();
                 if (cp instanceof ContractPrice.Custom custom) {
                     rec.set(field("contract_price_type"), "CUSTOM");
-                    rec.set(field("contract_price_value"), custom.getValue());
+                    rec.set(field("contract_price_value"), custom.value());
                 } else if (cp instanceof ContractPrice.Economy) {
                     rec.set(field("contract_price_type"), "ECONOMY");
                 } else if (cp instanceof ContractPrice.Basic) {
@@ -203,7 +202,6 @@ public class JobOfferMapper {
                     rec.set(field("contract_price_type"), "PREMIUM");
                 }
             }
-            default -> {}
         }
     }
 }

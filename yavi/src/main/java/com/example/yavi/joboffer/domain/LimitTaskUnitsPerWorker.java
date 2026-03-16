@@ -12,35 +12,31 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-public class LimitTaskUnitsPerWorker {
-    private final long lmit;
+public sealed interface LimitTaskUnitsPerWorker {
+    record Unlimited() implements LimitTaskUnitsPerWorker {}
+    record Limited(long limit) implements LimitTaskUnitsPerWorker {}
 
-    public static final LimitTaskUnitsPerWorker UNLIMITED = new LimitTaskUnitsPerWorker(-1L);
-
-    static StringValidator<String> typeValidator = StringValidatorBuilder.of("type", c -> c.oneOf(
-            Set.of("unlimited", "limited")
-    )).build();
-
-    static final LongValidator<Long> limitValidator = LongValidatorBuilder.of("limit", c -> c.greaterThan(1L).lessThan(3000L))
-            .build();
-
-    public LimitTaskUnitsPerWorker(long limit) {
-        this.lmit = limit;
+    default Optional<Long> getLimit() {
+        return switch (this) {
+            case Unlimited _ -> Optional.empty();
+            case Limited l -> Optional.of(l.limit());
+        };
     }
 
-    public Optional<Long> getLimit() {
-        if (lmit <= 0) {
-            return Optional.empty();
-        }
-        return Optional.of(lmit);
-    }
+    StringValidator<String> typeValidator = StringValidatorBuilder.of("type",
+            c -> c.oneOf(Set.of("unlimited", "limited"))
+    ).build();
 
-    static Arguments1Validator<Map<String, Object>, LimitTaskUnitsPerWorker> mapValidator = (m, locale, context) -> typeValidator.validate(Objects.toString(m.get("type")))
-            .flatMap(type -> (switch (type) {
-                case "unlimited" -> Validated.successWith(UNLIMITED);
-                case "limited" -> limitValidator
-                        .andThen(LimitTaskUnitsPerWorker::new)
-                        .validate(((Number) m.get("limit")).longValue());
-                default -> throw new IllegalStateException("Unexpected value: " + type);
-            }));
+    LongValidator<Long> limitValidator = LongValidatorBuilder.of("limit",
+            c -> c.greaterThan(1L).lessThan(3000L)).build();
+
+    Arguments1Validator<Map<String, Object>, LimitTaskUnitsPerWorker> mapValidator = (m, locale, context) ->
+            typeValidator.validate(Objects.toString(m.get("type")))
+                    .flatMap(type -> switch (type) {
+                        case "unlimited" -> Validated.successWith((LimitTaskUnitsPerWorker) new Unlimited());
+                        case "limited" -> limitValidator.andThen(Limited::new)
+                                .validate(((Number) m.get("limit")).longValue())
+                                .map(l -> l);
+                        default -> throw new IllegalStateException("Unexpected value: " + type);
+                    });
 }

@@ -6,11 +6,7 @@ import am.ik.yavi.builder.LongValidatorBuilder;
 import am.ik.yavi.builder.StringValidatorBuilder;
 import am.ik.yavi.core.Validated;
 import am.ik.yavi.core.ViolationMessage;
-import lombok.Getter;
-import lombok.ToString;
 
-@ToString
-@Getter
 public class Student {
     private final Identifier studentId;
     private final String name;
@@ -25,6 +21,23 @@ public class Student {
         this.studentId = studentId;
         this.name = name;
         this.status = status;
+    }
+
+    public Identifier getStudentId() {
+        return studentId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public StudentStatus getStatus() {
+        return status;
+    }
+
+    @Override
+    public String toString() {
+        return "Student(studentId=" + studentId + ", name=" + name + ", status=" + status + ")";
     }
 
     public static final LongValidator<Identifier> studentIdValidator = LongValidatorBuilder.of("studentId",
