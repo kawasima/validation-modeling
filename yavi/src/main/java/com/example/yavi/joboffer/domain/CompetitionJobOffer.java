@@ -19,6 +19,11 @@ public class CompetitionJobOffer extends JobOffer {
         this.contractPrice = contractPrice;
     }
 
+    @Override
+    public JobOfferType getJobOfferType() {
+        return JobOfferType.COMPETITION;
+    }
+
     static final Arguments1Validator<Map<String, Object>, String> mapTitleValidator = titleValidator.compose(
             m -> (String) m.get("title"));
 

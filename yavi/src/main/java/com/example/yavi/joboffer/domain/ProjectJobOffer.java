@@ -18,6 +18,11 @@ public class ProjectJobOffer extends JobOffer {
         this.settlement = settlement;
     }
 
+    @Override
+    public JobOfferType getJobOfferType() {
+        return JobOfferType.PROJECT;
+    }
+
     static final Arguments1Validator<Map<String, Object>, String> mapTitleValidator = titleValidator.compose(
             m -> (String) m.get("title"));
 

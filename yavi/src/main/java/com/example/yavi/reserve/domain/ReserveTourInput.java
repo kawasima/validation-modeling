@@ -1,4 +1,4 @@
-package com.example.yavi.reserve;
+package com.example.yavi.reserve.domain;
 
 import am.ik.yavi.arguments.*;
 import am.ik.yavi.builder.IntegerValidatorBuilder;
@@ -38,9 +38,6 @@ public record ReserveTourInput(
             remarksValidator
     ).apply(ReserveTourInput::new);
 
-    public ReserveTourInput {
-        validator.validated(tourCode, Integer.toString(adultCount), Integer.toString(childCount), remarks);
-    }
     public static Validated<ReserveTourInput> parse(String tourCode, String adultCount, String childCount, String remarks) {
         return validator.validate(tourCode, adultCount, childCount, remarks);
     }

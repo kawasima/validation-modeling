@@ -16,6 +16,7 @@ import java.util.function.Function;
 
 @ToString
 public abstract class JobOffer {
+    public abstract JobOfferType getJobOfferType();
     static final StringValidator<String> titleValidator = StringValidatorBuilder.of("title", c -> c.notBlank().lessThan(100))
             .build();
     static final StringValidator<String> descriptionValidator = StringValidatorBuilder.of("description", c -> c.notBlank().lessThan(1000))

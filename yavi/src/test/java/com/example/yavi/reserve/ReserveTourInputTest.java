@@ -1,6 +1,7 @@
 package com.example.yavi.reserve;
 
 import am.ik.yavi.core.Validated;
+import com.example.yavi.reserve.domain.ReserveTourInput;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

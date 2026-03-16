@@ -4,13 +4,16 @@ import am.ik.yavi.arguments.Arguments1Validator;
 import am.ik.yavi.arguments.ArgumentsValidators;
 import am.ik.yavi.arguments.LongValidator;
 import am.ik.yavi.builder.LongValidatorBuilder;
+import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Map;
 
 @ToString
 public final class RangeBudget implements Budget {
+    @Getter
     private final Long lowerBound;
+    @Getter
     private final Long upperBound;
 
     static LongValidator<Long> lowerBoundValidator = LongValidatorBuilder.of("lowerBound", c -> c.greaterThan(0L))

@@ -35,6 +35,11 @@ public class TaskJobOffer extends JobOffer {
         this.numberOfTaskUnits = numberOfTaskUnits;
         this.limitTaskUnitsPerWorker = limitTaskUnitsPerWorker;
     }
+    @Override
+    public JobOfferType getJobOfferType() {
+        return JobOfferType.TASK;
+    }
+
     static final Arguments1Validator<Map<String, Object>, String> mapTitleValidator = titleValidator.compose(
             m -> (String) m.get("title"));
 
