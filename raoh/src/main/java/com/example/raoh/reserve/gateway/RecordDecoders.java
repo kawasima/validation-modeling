@@ -4,7 +4,7 @@ import com.example.raoh.reserve.data.Customer;
 import com.example.raoh.reserve.data.Tour;
 import net.unit8.raoh.jooq.JooqRecordDecoder;
 
-import static net.unit8.raoh.ObjectDecoders.*;
+import static net.unit8.raoh.decode.ObjectDecoders.*;
 import static net.unit8.raoh.jooq.JooqRecordDecoders.*;
 
 public class RecordDecoders {

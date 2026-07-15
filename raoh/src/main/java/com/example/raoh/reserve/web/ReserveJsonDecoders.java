@@ -25,7 +25,7 @@ public class ReserveJsonDecoders {
                 field("customerId", customer(customerGateway)),
                 field("adultCount", int_().min(0).max(5)),
                 field("childCount", int_().min(0).max(5)),
-                field("remarks", allowBlankString().maxLength(80))
+                field("remarks", string().maxLength(80))
         ).map(ReserveTourInput::new)::decode;
     }
 }

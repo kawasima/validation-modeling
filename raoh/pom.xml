@@ -28,12 +28,12 @@
         <dependency>
             <groupId>net.unit8.raoh</groupId>
             <artifactId>raoh-json</artifactId>
-            <version>0.4.1</version>
+            <version>0.6.0</version>
         </dependency>
         <dependency>
             <groupId>net.unit8.raoh</groupId>
             <artifactId>raoh-jooq</artifactId>
-            <version>0.4.1</version>
+            <version>0.6.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

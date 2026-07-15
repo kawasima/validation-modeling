@@ -1,7 +1,7 @@
 package com.example.raoh.joboffer.web;
 
 import com.example.raoh.joboffer.data.*;
-import net.unit8.raoh.Decoder;
+import net.unit8.raoh.decode.Decoder;
 import net.unit8.raoh.Result;
 import tools.jackson.databind.JsonNode;
 
