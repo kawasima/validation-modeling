@@ -1,6 +1,7 @@
 package com.example.raoh.enrollment.web;
 
 import com.example.raoh.enrollment.data.Course;
+import com.example.raoh.enrollment.data.EnrollStudentInput;
 import com.example.raoh.enrollment.data.Student;
 import com.example.raoh.enrollment.gateway.CourseGateway;
 import com.example.raoh.enrollment.gateway.StudentGateway;
@@ -15,5 +16,13 @@ public class EnrollmentJsonDecoders {
 
     public static JsonDecoder<Course> course(CourseGateway courseGateway) {
         return long_().min(1).flatMap(courseGateway::findById)::decode;
+    }
+
+    public static JsonDecoder<EnrollStudentInput> enrollStudentInput(StudentGateway studentGateway,
+                                                                     CourseGateway courseGateway) {
+        return combine(
+                field("studentId", student(studentGateway)),
+                field("courseId", course(courseGateway))
+        ).map(EnrollStudentInput::new)::decode;
     }
 }

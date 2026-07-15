@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.JsonNode;
 
-import java.util.Map;
+import com.example.raoh.joboffer.web.JobOfferEncoders.JobOfferCreated;
 
+import static com.example.raoh.joboffer.web.JobOfferEncoders.JOB_OFFER_CREATED;
 import static com.example.raoh.joboffer.web.JobOfferJsonDecoders.JOB_OFFER_DECODER;
+import static com.example.raoh.web.ErrorEncoders.ERRORS;
 
 @RestController
 @RequestMapping("/api/job-offers")
@@ -29,17 +31,10 @@ public class JobOfferController {
         return switch (JOB_OFFER_DECODER.decode(jsonNode)) {
             case Ok(JobOffer jobOffer) -> {
                 String jobOfferId = jobOfferGateway.save(jobOffer);
-                yield ResponseEntity.ok(Map.of(
-                        "jobOfferId", jobOfferId,
-                        "title", jobOffer.title(),
-                        "type", jobOffer.getClass().getSimpleName()
-                ));
+                yield ResponseEntity.ok(JOB_OFFER_CREATED.encode(
+                        new JobOfferCreated(jobOfferId, jobOffer)));
             }
-            case Err(var issues) -> ResponseEntity.badRequest().body(Map.of(
-                    "errors", issues.asList().stream()
-                            .map(i -> Map.of("path", i.path().toString(), "message", i.message()))
-                            .toList()
-            ));
+            case Err(var issues) -> ResponseEntity.badRequest().body(ERRORS.encode(issues));
         };
     }
 }

@@ -8,6 +8,7 @@ import com.example.raoh.reserve.gateway.TourGateway;
 import net.unit8.raoh.Result;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.JsonNode;
@@ -19,6 +20,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ReserveTourControllerTest {
@@ -140,7 +143,9 @@ class ReserveTourControllerTest {
 
         ResponseEntity<?> response = controller.reserve(json);
 
-        assertThat(response.getStatusCode().is4xxClientError()).isTrue();
+        // 業務ルールで弾かれる。入力は正しいので 400 ではない
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT);
+        verify(reservationGateway, never()).save(any());
     }
 
     @Test

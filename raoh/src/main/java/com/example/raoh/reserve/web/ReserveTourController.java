@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.JsonNode;
 
-import java.util.Map;
+import com.example.raoh.reserve.web.ReserveEncoders.ReservationAccepted;
 
+import static com.example.raoh.reserve.web.ReserveEncoders.RESERVATION_ACCEPTED;
 import static com.example.raoh.reserve.web.ReserveJsonDecoders.*;
+import static com.example.raoh.web.ErrorEncoders.ERRORS;
 
 @RestController
 @RequestMapping("/api/tours")
@@ -44,24 +46,14 @@ public class ReserveTourController {
             case Ok(ReserveTourInput input) -> switch (acceptReservation.apply(input)) {
                 case Ok(Reservation reservation) -> {
                     String reservationId = reservationGateway.save(reservation);
-                    yield ResponseEntity.ok(Map.of(
-                            "reservationId", reservationId,
-                            "tourCode", reservation.tour().tourCode(),
-                            "adultCount", reservation.adultCount(),
-                            "childCount", reservation.childCount()
-                    ));
+                    yield ResponseEntity.ok(RESERVATION_ACCEPTED.encode(
+                            new ReservationAccepted(reservationId, reservation)));
                 }
-                case Err(var issues) -> ResponseEntity.badRequest().body(Map.of(
-                        "errors", issues.asList().stream()
-                                .map(i -> Map.of("path", i.path().toString(), "message", i.message()))
-                                .toList()
-                ));
+                // 業務ルールで受け付けられない。入力そのものは正しい
+                case Err(var issues) -> ResponseEntity.unprocessableContent().body(ERRORS.encode(issues));
             };
-            case Err(var issues) -> ResponseEntity.badRequest().body(Map.of(
-                    "errors", issues.asList().stream()
-                            .map(i -> Map.of("path", i.path().toString(), "message", i.message()))
-                            .toList()
-            ));
+            // デコード失敗。入力そのものが正しくない
+            case Err(var issues) -> ResponseEntity.badRequest().body(ERRORS.encode(issues));
         };
     }
 }

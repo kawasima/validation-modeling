@@ -2,8 +2,7 @@ package com.example.raoh.enrollment.web;
 
 import com.example.raoh.enrollment.behavior.EnrollStudent;
 import com.example.raoh.enrollment.data.CanEnrollStudent;
-import com.example.raoh.enrollment.data.Course;
-import com.example.raoh.enrollment.data.Student;
+import com.example.raoh.enrollment.data.EnrollStudentInput;
 import com.example.raoh.enrollment.gateway.CourseGateway;
 import com.example.raoh.enrollment.gateway.StudentGateway;
 import net.unit8.raoh.Err;
@@ -17,10 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.JsonNode;
 
-import java.util.Map;
-
-import static com.example.raoh.enrollment.web.EnrollmentJsonDecoders.*;
-import static net.unit8.raoh.json.JsonDecoders.*;
+import static com.example.raoh.enrollment.web.EnrollmentEncoders.ENROLLED;
+import static com.example.raoh.enrollment.web.EnrollmentJsonDecoders.enrollStudentInput;
+import static com.example.raoh.web.ErrorEncoders.ERRORS;
 
 @RestController
 @RequestMapping("/api/enrollments")
@@ -28,7 +26,7 @@ public class EnrollmentController {
     private final CourseGateway courseGateway;
     private final DSLContext dslContext;
     private final EnrollStudent enrollStudent;
-    private final JsonDecoder<CanEnrollStudent> enrollRequestDecoder;
+    private final JsonDecoder<EnrollStudentInput> enrollRequestDecoder;
 
     public EnrollmentController(StudentGateway studentGateway,
                                 CourseGateway courseGateway,
@@ -36,12 +34,7 @@ public class EnrollmentController {
         this.courseGateway = courseGateway;
         this.dslContext = dslContext;
         this.enrollStudent = new EnrollStudent(courseGateway);
-
-        enrollRequestDecoder = combine(
-                field("studentId", student(studentGateway)),
-                field("courseId", course(courseGateway))
-        ).map(CanEnrollStudent::new)
-                .flatMap(can -> enrollStudent.apply(can.student(), can.course()))::decode;
+        this.enrollRequestDecoder = enrollStudentInput(studentGateway, courseGateway);
     }
 
     /**
@@ -50,22 +43,19 @@ public class EnrollmentController {
     @PostMapping
     public ResponseEntity<?> enroll(@RequestBody JsonNode jsonNode) {
         return switch (enrollRequestDecoder.decode(jsonNode)) {
-            case Ok(CanEnrollStudent canEnroll) -> {
-                dslContext.transaction(() -> {
-                    courseGateway.enrollStudent(canEnroll.course(), canEnroll.student());
-                });
-                yield ResponseEntity.ok(Map.of(
-                        "studentId", canEnroll.student().studentId(),
-                        "courseId", canEnroll.course().courseId(),
-                        "studentName", canEnroll.student().name(),
-                        "courseName", canEnroll.course().name()
-                ));
-            }
-            case Err(var issues) -> ResponseEntity.badRequest().body(Map.of(
-                    "errors", issues.asList().stream()
-                            .map(i -> Map.of("path", i.path().toString(), "message", i.message()))
-                            .toList()
-            ));
+            // behavior 受講登録する = 学生 AND コース -> 受講可能
+            case Ok(EnrollStudentInput input) -> switch (enrollStudent.apply(input.student(), input.course())) {
+                case Ok(CanEnrollStudent canEnroll) -> {
+                    dslContext.transaction(() -> {
+                        courseGateway.enrollStudent(canEnroll.course(), canEnroll.student());
+                    });
+                    yield ResponseEntity.ok(ENROLLED.encode(canEnroll));
+                }
+                // 業務ルールで受け付けられない。入力そのものは正しい
+                case Err(var issues) -> ResponseEntity.unprocessableContent().body(ERRORS.encode(issues));
+            };
+            // デコード失敗。入力そのものが正しくない
+            case Err(var issues) -> ResponseEntity.badRequest().body(ERRORS.encode(issues));
         };
     }
 }

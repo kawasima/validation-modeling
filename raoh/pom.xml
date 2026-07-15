@@ -27,6 +27,11 @@
     <dependencies>
         <dependency>
             <groupId>net.unit8.raoh</groupId>
+            <artifactId>raoh</artifactId>
+            <version>0.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.unit8.raoh</groupId>
             <artifactId>raoh-json</artifactId>
             <version>0.6.0</version>
         </dependency>
